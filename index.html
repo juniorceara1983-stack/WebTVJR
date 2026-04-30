@@ -48,11 +48,11 @@
     <script>
         var video = document.getElementById('video');
         
-        // URL ABSOLUTA da sua VPS que está a correr o servidor-web (ID 11)
-        var videoSrc = '[http://51.81.17.162:8080/index.m3u8]
+        // CORREÇÃO: URL limpa e sem caracteres especiais extras
+        var videoSrc = 'http://51.81.17.162:8080/index.m3u8';
+
         if (Hls.isSupported()) {
             var hls = new Hls({
-                // Configurações para lidar com a latência de 265ms da rede
                 manifestLoadingTimeOut: 15000,
                 fragLoadingTimeOut: 20000,
                 enableWorker: true,
@@ -64,7 +64,6 @@
                 video.play();
             });
             
-            // Recarrega em caso de erro de rede (comum em transmissões via Tailscale)
             hls.on(Hls.Events.ERROR, function (event, data) {
                 if (data.fatal) {
                     switch (data.type) {
@@ -81,7 +80,6 @@
                 }
             });
         } 
-        // Suporte nativo para Safari (iOS)
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoSrc;
             video.addEventListener('loadedmetadata', function() {
