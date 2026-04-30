@@ -17,46 +17,80 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body { background: #121212; color: #e6edf3; font-family: system-ui, -apple-system, Segoe UI, sans-serif; text-align: center; margin: 0; padding: 1rem 1rem 5rem; min-height: 100vh; box-sizing: border-box; }
-        video { width: 100%; max-width: 800px; border: 2px solid #2ea043; border-radius: 8px; background: #000; }
+        h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+        video { width: 100%; max-width: 800px; border: 2px solid #2ea043; border-radius: 8px; background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         #pwa-install-btn {
             position: fixed;
             right: 12px;
             bottom: 12px;
             z-index: 1000;
-            padding: 0.5rem 0.85rem;
-            font-size: 0.8125rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
             font-weight: 500;
-            color: #e6edf3;
-            background: rgba(22, 27, 34, 0.92);
-            border: 1px solid #30363d;
+            color: #fff;
+            background: #238636;
+            border: 1px solid rgba(240,246,252,0.1);
             border-radius: 999px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+            transition: transform 0.2s;
         }
-        #pwa-install-btn:hover { background: #21262d; border-color: #388bfd; }
-        #pwa-install-btn:active { opacity: 0.9; }
+        #pwa-install-btn:active { transform: scale(0.95); }
         #pwa-install-btn[hidden] { display: none !important; }
     </style>
 </head>
 <body>
-    <h1>🎥 Transmissão Ao Vivo</h1>
-    <video id="video" controls></video>
+    <h1>🎥 Transmissão Ao Vivo (Paróquia)</h1>
+    
+    <video id="video" controls autoplay playsinline></video>
 
-    <button type="button" id="pwa-install-btn" hidden aria-label="Instalar WebTV Junior como aplicativo">Instalar App</button>
+    <button type="button" id="pwa-install-btn" hidden>Instalar App</button>
 
     <script>
         var video = document.getElementById('video');
+        
+        // URL ABSOLUTA da sua VPS que está a correr o servidor-web (ID 11)
         var videoSrc = 'http://51.81.17.162:8080/index.m3u8';
+
         if (Hls.isSupported()) {
-            var hls = new Hls();
+            var hls = new Hls({
+                // Configurações para lidar com a latência de 265ms da rede
+                manifestLoadingTimeOut: 15000,
+                fragLoadingTimeOut: 20000,
+                enableWorker: true,
+                lowLatencyMode: true
+            });
             hls.loadSource(videoSrc);
             hls.attachMedia(video);
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+            
+            // Recarrega em caso de erro de rede (comum em transmissões via Tailscale)
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+        } 
+        // Suporte nativo para Safari (iOS)
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
         }
     </script>
+
     <script>
         (function () {
             if ('serviceWorker' in navigator) {
@@ -81,11 +115,6 @@
                     deferredPrompt = null;
                     installBtn.hidden = true;
                 });
-            });
-
-            window.addEventListener('appinstalled', function () {
-                deferredPrompt = null;
-                installBtn.hidden = true;
             });
         })();
     </script>
