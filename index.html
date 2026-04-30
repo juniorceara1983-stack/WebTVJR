@@ -49,8 +49,7 @@
         var video = document.getElementById('video');
         
         // URL ABSOLUTA da sua VPS que está a correr o servidor-web (ID 11)
-        var videoSrc = 'http://51.81.17.162:8080/index.m3u8';
-
+        var videoSrc = '[http://51.81.17.162:8080/index.m3u8]
         if (Hls.isSupported()) {
             var hls = new Hls({
                 // Configurações para lidar com a latência de 265ms da rede
