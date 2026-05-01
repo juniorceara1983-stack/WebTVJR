@@ -155,4 +155,104 @@
     sessionStorage.removeItem(STORAGE_TOKEN);
     window.location.href = 'index.html';
   });
+
+  /* ── Mini preview player & camera controls ── */
+  var previewPlayer = null;
+  var currentZoom = 100;   /* percent, 50–300 */
+  var currentRot  = 0;     /* degrees, multiples of 90 */
+
+  function applyTransform() {
+    if (!previewPlayer) return;
+    var videoEl = previewPlayer.el().querySelector('video');
+    if (!videoEl) return;
+    var scale = currentZoom / 100;
+    videoEl.style.transform = 'scale(' + scale + ') rotate(' + currentRot + 'deg)';
+    var zoomVal = document.getElementById('zoom-val');
+    var rotVal  = document.getElementById('rot-val');
+    if (zoomVal) zoomVal.textContent = currentZoom + '%';
+    if (rotVal)  rotVal.textContent  = currentRot + '°';
+  }
+
+  function initPreviewPlayer() {
+    if (typeof videojs === 'undefined') return;
+    var streamUrl = localStorage.getItem(STORAGE_STREAM) ||
+                    'https://stream.minhafeconectada.com.br/index.m3u8';
+    var isSafari = videojs.browser && videojs.browser.IS_ANY_SAFARI;
+    previewPlayer = videojs('admin-preview-player', {
+      controls: true,
+      fluid: false,
+      muted: true,
+      preload: 'auto',
+      html5: {
+        vhs: { overrideNative: !isSafari },
+        nativeAudioTracks: true,
+        nativeVideoTracks: true,
+      },
+      sources: [{ src: streamUrl, type: 'application/x-mpegURL' }],
+    });
+    previewPlayer.ready(function () {
+      applyTransform();
+    });
+
+    /* zoom buttons */
+    var btnZoomIn    = document.getElementById('btn-zoom-in');
+    var btnZoomOut   = document.getElementById('btn-zoom-out');
+    var btnZoomReset = document.getElementById('btn-zoom-reset');
+    if (btnZoomIn) {
+      btnZoomIn.addEventListener('click', function () {
+        currentZoom = Math.min(300, currentZoom + 10);
+        applyTransform();
+      });
+    }
+    if (btnZoomOut) {
+      btnZoomOut.addEventListener('click', function () {
+        currentZoom = Math.max(50, currentZoom - 10);
+        applyTransform();
+      });
+    }
+    if (btnZoomReset) {
+      btnZoomReset.addEventListener('click', function () {
+        currentZoom = 100;
+        applyTransform();
+      });
+    }
+
+    /* rotation buttons */
+    var btnRotCw    = document.getElementById('btn-rot-cw');
+    var btnRotCcw   = document.getElementById('btn-rot-ccw');
+    var btnRotReset = document.getElementById('btn-rot-reset');
+    if (btnRotCw) {
+      btnRotCw.addEventListener('click', function () {
+        currentRot = (currentRot + 90) % 360;
+        applyTransform();
+      });
+    }
+    if (btnRotCcw) {
+      btnRotCcw.addEventListener('click', function () {
+        currentRot = (currentRot - 90 + 360) % 360;
+        applyTransform();
+      });
+    }
+    if (btnRotReset) {
+      btnRotReset.addEventListener('click', function () {
+        currentRot = 0;
+        applyTransform();
+      });
+    }
+
+    /* update preview stream URL when form is saved */
+    document.getElementById('form-config').addEventListener('submit', function () {
+      var newStream = (streamEl.value || '').trim();
+      if (newStream && previewPlayer) {
+        previewPlayer.src({ src: newStream, type: 'application/x-mpegURL' });
+        previewPlayer.play();
+      }
+    }, false);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPreviewPlayer);
+  } else {
+    initPreviewPlayer();
+  }
 })();
