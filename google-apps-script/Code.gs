@@ -53,22 +53,23 @@ function getOrCreateSheet(name) {
 function readConfig() {
   var sh = getOrCreateSheet(SHEET_CONFIG);
   var data = sh.getDataRange().getValues();
-  var config = { streamUrl: '', programaAtual: '', atualizadoEm: '' };
+  var config = { streamUrl: '', programaAtual: '', legenda: '', atualizadoEm: '' };
   for (var i = 1; i < data.length; i++) {
     var key = String(data[i][0]).trim();
     var val = String(data[i][1]).trim();
     if (key === 'streamUrl')    config.streamUrl    = val;
     if (key === 'programaAtual') config.programaAtual = val;
+    if (key === 'legenda')       config.legenda       = val;
     if (key === 'atualizadoEm')  config.atualizadoEm  = val;
   }
   return config;
 }
 
-function writeConfig(streamUrl, programaAtual) {
+function writeConfig(streamUrl, programaAtual, legenda) {
   var sh = getOrCreateSheet(SHEET_CONFIG);
   var now = new Date().toISOString();
   var data = sh.getDataRange().getValues();
-  var rowIndex = { streamUrl: -1, programaAtual: -1, atualizadoEm: -1 };
+  var rowIndex = { streamUrl: -1, programaAtual: -1, legenda: -1, atualizadoEm: -1 };
 
   for (var i = 1; i < data.length; i++) {
     var k = String(data[i][0]).trim();
@@ -86,6 +87,7 @@ function writeConfig(streamUrl, programaAtual) {
 
   upsert('streamUrl',    streamUrl);
   upsert('programaAtual', programaAtual);
+  upsert('legenda',       legenda !== undefined ? legenda : '');
   upsert('atualizadoEm',  now);
   SpreadsheetApp.flush();
 }
@@ -123,6 +125,7 @@ function doGet(e) {
     ok:           true,
     streamUrl:    config.streamUrl,
     programaAtual: config.programaAtual,
+    legenda:      config.legenda,
     atualizadoEm: config.atualizadoEm,
     canais:       canais
   };
@@ -168,10 +171,11 @@ function doPost(e) {
 
   var streamUrl    = String(body.streamUrl    || '').trim();
   var programaAtual = String(body.programaAtual || '').trim();
+  var legenda       = String(body.legenda       || '').trim();
 
-  writeConfig(streamUrl, programaAtual);
+  writeConfig(streamUrl, programaAtual, legenda);
 
-  return jsonResp({ ok: true, streamUrl: streamUrl, programaAtual: programaAtual });
+  return jsonResp({ ok: true, streamUrl: streamUrl, programaAtual: programaAtual, legenda: legenda });
 }
 
 function jsonResp(obj) {
@@ -191,9 +195,10 @@ function setupSheet() {
   var configSh = ss.getSheetByName(SHEET_CONFIG) || ss.insertSheet(SHEET_CONFIG);
   configSh.clearContents();
   configSh.getRange(1, 1, 1, 3).setValues([['Chave', 'Valor', 'Descrição']]);
-  configSh.getRange(2, 1, 3, 3).setValues([
+  configSh.getRange(2, 1, 4, 3).setValues([
     ['streamUrl',    'index.m3u8',                   'URL do stream HLS (.m3u8) exibido no player principal'],
     ['programaAtual', 'Fé Conectada — ao vivo',       'Nome do programa exibido na tela para os visitantes'],
+    ['legenda',       '',                              'Texto de legenda/aviso exibido sobre o player (deixe vazio para ocultar)'],
     ['atualizadoEm', new Date().toISOString(),         'Data/hora da última atualização (preenchido automaticamente)']
   ]);
   configSh.setFrozenRows(1);

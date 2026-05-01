@@ -2,6 +2,7 @@
   var STORAGE_STREAM = 'fec_stream_url';
   var STORAGE_JSON = 'fec_programacao_url';
   var STORAGE_PROGRAMA_LOCAL = 'fec_programa_local';
+  var STORAGE_LEGENDA = 'fec_legenda_local';
   var fecPlayer = null;
   var lastRemoteStream = '';
   var mainStreamUrl = '';
@@ -76,6 +77,20 @@
     if (el) el.textContent = text || '—';
   }
 
+  function setLegendaOverlay(text) {
+    var overlay = document.getElementById('player-overlay');
+    var overlayText = document.getElementById('player-overlay-text');
+    if (!overlay || !overlayText) return;
+    var trimmed = (text || '').trim();
+    if (trimmed) {
+      overlayText.textContent = trimmed;
+      overlay.hidden = false;
+    } else {
+      overlay.hidden = true;
+      overlayText.textContent = '';
+    }
+  }
+
   function refreshPrograma() {
     if (hasRemoteApi()) {
       return fetchPublicConfig()
@@ -86,6 +101,7 @@
               lastRemoteStream = data.streamUrl;
               fecPlayer.src({ src: data.streamUrl, type: 'application/x-mpegURL' });
             }
+            setLegendaOverlay(data.legenda || '');
           } else {
             throw new Error('api');
           }
@@ -93,11 +109,13 @@
         .catch(function () {
           var local = localStorage.getItem(STORAGE_PROGRAMA_LOCAL);
           setProgramaEl(local || 'Programação indisponível');
+          setLegendaOverlay(localStorage.getItem(STORAGE_LEGENDA) || '');
         });
     }
     var local = localStorage.getItem(STORAGE_PROGRAMA_LOCAL);
     if (local) {
       setProgramaEl(local);
+      setLegendaOverlay(localStorage.getItem(STORAGE_LEGENDA) || '');
       return Promise.resolve();
     }
     return fetch(getProgramacaoUrl(), { cache: 'no-cache' })
@@ -107,31 +125,45 @@
       })
       .then(function (data) {
         setProgramaEl(data.programaAtual || data.programa || '—');
+        setLegendaOverlay(data.legenda || localStorage.getItem(STORAGE_LEGENDA) || '');
       })
       .catch(function () {
         setProgramaEl('Programação indisponível');
+        setLegendaOverlay(localStorage.getItem(STORAGE_LEGENDA) || '');
       });
   }
 
-  function setupPictureInPicture(player) {
-    var btn = document.getElementById('btn-pip');
+  function showToast(msg) {
+    var existing = document.getElementById('fec-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.id = 'fec-toast';
+    toast.className = 'fec-toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(function () {
+      toast.classList.add('fec-toast--visible');
+    }, 10);
+    setTimeout(function () {
+      toast.classList.remove('fec-toast--visible');
+      setTimeout(function () { toast.remove(); }, 400);
+    }, 4000);
+  }
+
+  function setupCastButton(player) {
+    var btn = document.getElementById('btn-cast');
     if (!btn) return;
-    var videoEl = player.el().querySelector('video');
-    if (!videoEl || !document.pictureInPictureEnabled) {
-      btn.disabled = true;
-      btn.title = 'Picture-in-Picture não disponível neste navegador';
-      return;
-    }
     btn.addEventListener('click', function () {
-      try {
-        if (document.pictureInPictureElement) {
-          document.exitPictureInPicture();
-        } else {
-          videoEl.requestPictureInPicture();
-        }
-      } catch (e) {
-        /* ignore */
+      /* Try to click the Chromecast button already in the control bar */
+      var castBtn = player.el().querySelector('.vjs-chromecast-button');
+      if (castBtn) {
+        castBtn.click();
+        return;
       }
+      /* Fallback: inform the user via non-blocking toast */
+      showToast(
+        'Para transmitir na TV, use o ícone de Chromecast ou AirPlay na barra de controles do player.'
+      );
     });
   }
 
@@ -231,7 +263,7 @@
         el.setAttribute('webkit-playsinline', '');
         el.setAttribute('x-webkit-airplay', 'allow');
       }
-      setupPictureInPicture(this);
+      setupCastButton(this);
     });
   }
 
@@ -347,6 +379,9 @@
           }
           if (data && data.programaAtual) {
             setProgramaEl(data.programaAtual);
+          }
+          if (data && data.legenda !== undefined) {
+            setLegendaOverlay(data.legenda);
           }
         })
         .catch(function () {
