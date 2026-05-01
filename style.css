@@ -504,3 +504,93 @@ a:hover {
     flex: 1 1 auto;
   }
 }
+
+/* Admin preview */
+.admin-preview-panel {
+  margin-top: 1.5rem;
+}
+
+.admin-preview-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.admin-preview-wrap .video-js {
+  width: 100%;
+  max-height: 280px;
+}
+
+.admin-preview-wrap .video-js .vjs-tech {
+  transition: transform 0.25s ease;
+  transform-origin: center center;
+}
+
+.admin-camera-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-camera-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  flex: 1 1 auto;
+}
+
+.admin-camera-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.admin-zoom-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 3rem;
+  text-align: center;
+}
+
+.btn-cam {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.btn-cam:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(61, 214, 198, 0.08);
+}
+
+.btn-cam--reset {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.btn-cam--reset:hover {
+  color: var(--accent);
+}
