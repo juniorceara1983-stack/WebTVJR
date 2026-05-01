@@ -62,7 +62,7 @@
   }
 
   function loadFields() {
-    streamEl.value = localStorage.getItem(STORAGE_STREAM) || 'https://stream.minhafeconectada.com.br/index.m3u8';
+    streamEl.value = localStorage.getItem(STORAGE_STREAM) || 'http://stream.minhafeconectada.com.br:8080/index.m3u8';
     programaEl.value = localStorage.getItem(STORAGE_PROGRAMA) || '';
     if (tokenEl) {
       tokenEl.value = sessionStorage.getItem(STORAGE_TOKEN) || '';
@@ -103,11 +103,6 @@
     var stream = streamEl.value.trim();
     var programa = programaEl.value.trim();
     var token = tokenEl ? tokenEl.value.trim() : '';
-
-    if (stream.indexOf('http://') === 0) {
-      showErr('URL de stream com http:// causa erro de "Mixed Content" no GitHub Pages. Use https:// em vez disso.');
-      return;
-    }
 
     if (hasApi()) {
       if (!token) {
