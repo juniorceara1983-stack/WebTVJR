@@ -239,6 +239,23 @@ a:hover {
   color: var(--accent);
 }
 
+.btn-live {
+  width: 100%;
+  background: linear-gradient(180deg, #e05c2e 0%, #b03a10 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 22px rgba(224, 92, 46, 0.35);
+  animation: pulse-live 2s ease-in-out infinite;
+}
+.btn-live:hover {
+  box-shadow: 0 8px 28px rgba(224, 92, 46, 0.5);
+}
+
+@keyframes pulse-live {
+  0%, 100% { box-shadow: 0 6px 22px rgba(224, 92, 46, 0.35); }
+  50%       { box-shadow: 0 6px 32px rgba(224, 92, 46, 0.6); }
+}
+
 .footer-note {
   text-align: center;
   font-size: 0.75rem;

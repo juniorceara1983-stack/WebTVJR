@@ -62,7 +62,7 @@
   }
 
   function loadFields() {
-    streamEl.value = localStorage.getItem(STORAGE_STREAM) || 'http://stream.minhafeconectada.com.br:8080/index.m3u8';
+    streamEl.value = localStorage.getItem(STORAGE_STREAM) || 'https://stream.minhafeconectada.com.br/index.m3u8';
     programaEl.value = localStorage.getItem(STORAGE_PROGRAMA) || '';
     if (tokenEl) {
       tokenEl.value = sessionStorage.getItem(STORAGE_TOKEN) || '';
