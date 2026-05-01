@@ -62,7 +62,7 @@
 
   function getStreamUrlFallback() {
     var v = localStorage.getItem(STORAGE_STREAM);
-    return v && v.length ? v : 'https://stream.minhafeconectada.com.br/index.m3u8';
+    return v && v.length ? v : 'http://stream.minhafeconectada.com.br:8080/index.m3u8';
   }
 
   function getProgramacaoUrl() {
