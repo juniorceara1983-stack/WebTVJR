@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#121a24">
+  <title>Entrar — Fé Conectada</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-card" id="auth-root">
+    <h1>Painel</h1>
+    <p class="sub">Acesso restrito à equipe técnica.</p>
+    <div class="error-box" id="login-error" hidden>Senha incorreta.</div>
+    <form id="login-form">
+      <div class="field">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="lembrar" name="lembrar" checked>
+        <span>Manter acesso neste aparelho (um clique nas próximas visitas)</span>
+      </label>
+      <button type="submit" class="btn-primary">Entrar</button>
+    </form>
+  </main>
+
+  <script src="auth-config.js"></script>
+  <script>
+    (function () {
+      var cfg = window.FEC_SITE;
+      var root = document.getElementById('auth-root');
+      var params = new URLSearchParams(window.location.search);
+
+      function authed() {
+        return (
+          cfg &&
+          (localStorage.getItem(cfg.storageTrust) === '1' ||
+            sessionStorage.getItem(cfg.storageSession) === '1')
+        );
+      }
+
+      if (authed()) {
+        window.location.replace(params.get('next') || 'admin.html');
+        return;
+      }
+
+      if (!cfg || params.get(cfg.adminQuery.k) !== cfg.adminQuery.v) {
+        root.innerHTML = '<p class="auth-gate-msg">Página não encontrada.</p>';
+        return;
+      }
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(function () {});
+        });
+      }
+
+      var form = document.getElementById('login-form');
+      var err = document.getElementById('login-error');
+      var next = params.get('next') || 'admin.html';
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        err.hidden = true;
+        var pass = document.getElementById('password').value;
+        var lembrar = document.getElementById('lembrar').checked;
+        if (pass !== cfg.adminPassword) {
+          err.hidden = false;
+          return;
+        }
+        if (lembrar) {
+          localStorage.setItem(cfg.storageTrust, '1');
+          sessionStorage.removeItem(cfg.storageSession);
+        } else {
+          sessionStorage.setItem(cfg.storageSession, '1');
+          localStorage.removeItem(cfg.storageTrust);
+        }
+        window.location.href = next;
+      });
+    })();
+  </script>
+</body>
+</html>

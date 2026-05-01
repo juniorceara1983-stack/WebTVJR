@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#121a24">
+  <title>Painel — Fé Conectada</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo">
+        <span class="logo__mark" aria-hidden="true">✝</span>
+        Fé Conectada
+      </a>
+      <a class="header-admin" href="index.html">Ver transmissão</a>
+    </div>
+  </header>
+
+  <div class="admin-wrap">
+    <h1>Painel administrativo</h1>
+    <p class="lead">
+      Com <code>api-config.js</code> preenchido, o stream e o nome do programa são lidos e gravados na planilha via Google Apps Script.
+      Sem URL da API, os dados ficam só neste navegador (localStorage).
+    </p>
+
+    <section class="form-panel">
+      <h2>Transmissão e programa</h2>
+      <div class="error-box" id="save-error" hidden></div>
+      <form id="form-config">
+        <div class="field">
+          <label for="field-stream">Endereço do stream (.m3u8)</label>
+          <input type="text" id="field-stream" name="stream" placeholder="index.m3u8 ou https://…/playlist.m3u8" required>
+        </div>
+        <div class="field">
+          <label for="field-programa">Nome do programa ao vivo</label>
+          <input type="text" id="field-programa" name="programa" placeholder="Ex.: Culto da noite">
+        </div>
+        <div class="field" id="row-api-token" hidden>
+          <label for="field-api-token">Token da API (ADMIN_TOKEN no Apps Script)</label>
+          <input type="password" id="field-api-token" name="apitoken" autocomplete="off" placeholder="Mesmo valor definido nas propriedades do script">
+        </div>
+        <button type="submit" class="btn-primary">Salvar</button>
+        <p class="hint-ok" id="save-hint" hidden>Salvo. Visitantes verão na próxima atualização automática (cerca de 1 minuto) ou ao recarregar.</p>
+      </form>
+    </section>
+
+    <div class="form-actions">
+      <button type="button" class="btn-muted" id="btn-logout">Sair e limpar acesso neste aparelho</button>
+    </div>
+  </div>
+
+  <script src="auth-config.js"></script>
+  <script src="api-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

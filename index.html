@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fé Conectada — transmissão ao vivo">
+  <meta name="theme-color" content="#121a24">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fé Conectada">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Fé Conectada — Web TV</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@8.21.0/dist/video-js.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@silvermine/videojs-chromecast@1.5.0/dist/silvermine-videojs-chromecast.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="./index.html" class="logo">
+        <span class="logo__mark" aria-hidden="true">✝</span>
+        Fé Conectada
+      </a>
+      <a class="header-lock" href="admin.html" title="Acesso da equipe" aria-label="Acesso da equipe">
+        <svg class="header-lock__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="main">
+    <p class="main__title">Ao vivo</p>
+    <div class="player-wrap">
+      <video
+        id="fec-player"
+        class="video-js vjs-default-skin vjs-big-play-centered"
+        controls
+        playsinline
+        webkit-playsinline
+        x-webkit-airplay="allow"
+      ></video>
+    </div>
+
+    <section class="programa-box" aria-live="polite">
+      <p class="programa-box__label">Programa atual</p>
+      <h2 class="programa-box__title" id="programa-atual">Carregando…</h2>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="btn btn-install" id="btn-instalar-pwa">
+        INSTALAR APP NA TELA INICIAL
+      </button>
+      <button type="button" class="btn btn-pip" id="btn-pip">
+        Modo Picture-in-Picture
+      </button>
+    </div>
+  </main>
+
+  <p class="footer-note">Chromecast e AirPlay dependem do dispositivo e do navegador.</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/video.js@8.21.0/dist/video.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@silvermine/videojs-chromecast@1.5.0/dist/silvermine-videojs-chromecast.min.js"></script>
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+  <script src="api-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
