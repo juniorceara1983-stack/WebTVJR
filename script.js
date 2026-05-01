@@ -268,7 +268,7 @@
       html +=
         '<button type="button" class="canal-card" data-url="' + safeUrl + '" ' +
         'aria-pressed="false" title="' + safeNome + '">' +
-        (c.logo ? '<img class="canal-card__logo" src="' + c.logo.replace(/"/g, '&quot;') + '" alt="" aria-hidden="true">' : '') +
+        (c.logo ? '<img class="canal-card__logo" src="' + c.logo.replace(/"/g, '&quot;') + '" alt="Logo de ' + safeNome + '">' : '') +
         '<span class="canal-card__nome">' + c.nome + '</span>' +
         (c.categoria ? '<span class="canal-card__cat">' + c.categoria + '</span>' : '') +
         '</button>';
@@ -287,7 +287,7 @@
   function loadCanais() {
     fetch('data/canais.json', { cache: 'no-cache' })
       .then(function (res) {
-        if (!res.ok) throw new Error('bad status');
+        if (!res.ok) throw new Error('Failed to load channels: ' + res.status);
         return res.json();
       })
       .then(function (data) {
