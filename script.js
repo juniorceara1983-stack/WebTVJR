@@ -4,6 +4,7 @@
   var STORAGE_PROGRAMA_LOCAL = 'fec_programa_local';
   var fecPlayer = null;
   var lastRemoteStream = '';
+  var mainStreamUrl = '';
 
   function apiBaseUrl() {
     var u = window.FEC_API && window.FEC_API.scriptUrl;
@@ -62,7 +63,7 @@
 
   function getStreamUrlFallback() {
     var v = localStorage.getItem(STORAGE_STREAM);
-    return v && v.length ? v : 'http://stream.minhafeconectada.com.br:8080/index.m3u8';
+    return v && v.length ? v : 'https://stream.minhafeconectada.com.br/index.m3u8';
   }
 
   function getProgramacaoUrl() {
@@ -185,6 +186,7 @@
     if (typeof videojs === 'undefined') return;
 
     lastRemoteStream = streamUrl;
+    mainStreamUrl = streamUrl;
     var isSafari = videojs.browser && videojs.browser.IS_ANY_SAFARI;
 
     var options = {
@@ -233,23 +235,47 @@
     });
   }
 
-  function switchChannel(url, cardEl) {
-    if (!fecPlayer) return;
-    fecPlayer.src({ src: url, type: 'application/x-mpegURL' });
-    fecPlayer.play();
+  function clearActiveChannels() {
     var cards = document.querySelectorAll('.canal-card');
     for (var i = 0; i < cards.length; i++) {
       cards[i].classList.remove('canal-card--active');
       cards[i].setAttribute('aria-pressed', 'false');
     }
-    if (cardEl) {
-      cardEl.classList.add('canal-card--active');
-      cardEl.setAttribute('aria-pressed', 'true');
-    }
+  }
+
+  function scrollToPlayer() {
     var playerWrap = document.querySelector('.player-wrap');
     if (playerWrap) {
       playerWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  function setLiveBtnVisible(visible) {
+    var btn = document.getElementById('btn-live');
+    if (!btn) return;
+    btn.hidden = !visible;
+  }
+
+  function switchChannel(url, cardEl) {
+    if (!fecPlayer) return;
+    fecPlayer.src({ src: url, type: 'application/x-mpegURL' });
+    fecPlayer.play();
+    clearActiveChannels();
+    if (cardEl) {
+      cardEl.classList.add('canal-card--active');
+      cardEl.setAttribute('aria-pressed', 'true');
+    }
+    setLiveBtnVisible(true);
+    scrollToPlayer();
+  }
+
+  function goLive() {
+    if (!fecPlayer || !mainStreamUrl) return;
+    fecPlayer.src({ src: mainStreamUrl, type: 'application/x-mpegURL' });
+    fecPlayer.play();
+    clearActiveChannels();
+    setLiveBtnVisible(false);
+    scrollToPlayer();
   }
 
   function renderCanais(canais) {
@@ -303,6 +329,11 @@
     registerServiceWorker();
     setupInstallPrompt();
     loadCanais();
+
+    var liveBtn = document.getElementById('btn-live');
+    if (liveBtn) {
+      liveBtn.addEventListener('click', goLive);
+    }
 
     var streamUrl = getStreamUrlFallback();
 
