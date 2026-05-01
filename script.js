@@ -233,9 +233,76 @@
     });
   }
 
+  function switchChannel(url, cardEl) {
+    if (!fecPlayer) return;
+    fecPlayer.src({ src: url, type: 'application/x-mpegURL' });
+    fecPlayer.play();
+    var cards = document.querySelectorAll('.canal-card');
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].classList.remove('canal-card--active');
+      cards[i].setAttribute('aria-pressed', 'false');
+    }
+    if (cardEl) {
+      cardEl.classList.add('canal-card--active');
+      cardEl.setAttribute('aria-pressed', 'true');
+    }
+    var playerWrap = document.querySelector('.player-wrap');
+    if (playerWrap) {
+      playerWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function renderCanais(canais) {
+    var lista = document.getElementById('canais-lista');
+    if (!lista) return;
+    if (!canais || !canais.length) {
+      lista.innerHTML = '<p class="canais-loading">Nenhum canal disponível.</p>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < canais.length; i++) {
+      var c = canais[i];
+      var safeNome = c.nome.replace(/"/g, '&quot;');
+      var safeCat = (c.categoria || '').replace(/"/g, '&quot;');
+      var safeUrl = c.url.replace(/"/g, '&quot;');
+      html +=
+        '<button type="button" class="canal-card" data-url="' + safeUrl + '" ' +
+        'aria-pressed="false" title="' + safeNome + '">' +
+        (c.logo ? '<img class="canal-card__logo" src="' + c.logo.replace(/"/g, '&quot;') + '" alt="" aria-hidden="true">' : '') +
+        '<span class="canal-card__nome">' + c.nome + '</span>' +
+        (c.categoria ? '<span class="canal-card__cat">' + c.categoria + '</span>' : '') +
+        '</button>';
+    }
+    lista.innerHTML = html;
+    var cards = lista.querySelectorAll('.canal-card');
+    for (var j = 0; j < cards.length; j++) {
+      (function (card) {
+        card.addEventListener('click', function () {
+          switchChannel(card.getAttribute('data-url'), card);
+        });
+      })(cards[j]);
+    }
+  }
+
+  function loadCanais() {
+    fetch('data/canais.json', { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('bad status');
+        return res.json();
+      })
+      .then(function (data) {
+        renderCanais(data.canais || []);
+      })
+      .catch(function () {
+        var lista = document.getElementById('canais-lista');
+        if (lista) lista.innerHTML = '<p class="canais-loading">Não foi possível carregar os canais.</p>';
+      });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     registerServiceWorker();
     setupInstallPrompt();
+    loadCanais();
 
     var streamUrl = getStreamUrlFallback();
 

@@ -400,6 +400,81 @@ a:hover {
   margin-top: 0.75rem;
 }
 
+/* Channel list */
+.canais-section {
+  margin-top: 2.5rem;
+}
+
+.canais-section__title {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 1rem;
+}
+
+.canais-loading {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.canais-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.canal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+  padding: 0.9rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.canal-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(61, 214, 198, 0.15);
+}
+
+.canal-card--active {
+  border-color: var(--accent);
+  background: rgba(61, 214, 198, 0.08);
+  box-shadow: 0 4px 20px rgba(61, 214, 198, 0.2);
+}
+
+.canal-card__logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.canal-card__nome {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.canal-card__cat {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 @media (min-width: 600px) {
   .actions {
     flex-direction: row;
