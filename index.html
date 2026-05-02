@@ -44,6 +44,9 @@
         webkit-playsinline
         x-webkit-airplay="allow"
       ></video>
+      <div class="player-overlay" id="player-overlay" hidden>
+        <span class="player-overlay__text" id="player-overlay-text"></span>
+      </div>
     </div>
 
     <section class="programa-box" aria-live="polite">
@@ -58,8 +61,8 @@
       <button type="button" class="btn btn-install" id="btn-instalar-pwa">
         INSTALAR APP NA TELA INICIAL
       </button>
-      <button type="button" class="btn btn-pip" id="btn-pip">
-        Modo Picture-in-Picture
+      <button type="button" class="btn btn-cast" id="btn-cast">
+        📺 Transmitir na TV
       </button>
     </div>
   </main>

@@ -4,6 +4,7 @@
 
   var STORAGE_STREAM = 'fec_stream_url';
   var STORAGE_PROGRAMA = 'fec_programa_local';
+  var STORAGE_LEGENDA = 'fec_legenda_local';
   var STORAGE_TOKEN = 'fec_gs_token';
 
   function authed() {
@@ -46,6 +47,7 @@
 
   var streamEl = document.getElementById('field-stream');
   var programaEl = document.getElementById('field-programa');
+  var legendaEl = document.getElementById('field-legenda');
   var tokenEl = document.getElementById('field-api-token');
   var tokenRow = document.getElementById('row-api-token');
   var hint = document.getElementById('save-hint');
@@ -64,6 +66,7 @@
   function loadFields() {
     streamEl.value = localStorage.getItem(STORAGE_STREAM) || 'https://stream.minhafeconectada.com.br/index.m3u8';
     programaEl.value = localStorage.getItem(STORAGE_PROGRAMA) || '';
+    if (legendaEl) legendaEl.value = localStorage.getItem(STORAGE_LEGENDA) || '';
     if (tokenEl) {
       tokenEl.value = sessionStorage.getItem(STORAGE_TOKEN) || '';
     }
@@ -76,6 +79,7 @@
         .then(function (data) {
           if (data && data.streamUrl) streamEl.value = data.streamUrl;
           if (data && data.programaAtual) programaEl.value = data.programaAtual;
+          if (data && legendaEl && data.legenda !== undefined) legendaEl.value = data.legenda;
         })
         .catch(function () {
           /* manter valores locais */
@@ -102,6 +106,7 @@
     hideErr();
     var stream = streamEl.value.trim();
     var programa = programaEl.value.trim();
+    var legenda = legendaEl ? legendaEl.value.trim() : '';
     var token = tokenEl ? tokenEl.value.trim() : '';
 
     if (hasApi()) {
@@ -118,6 +123,7 @@
           token: token,
           streamUrl: stream,
           programaAtual: programa,
+          legenda: legenda,
         }),
       })
         .then(function (r) {
@@ -127,6 +133,7 @@
           if (data && data.ok) {
             localStorage.setItem(STORAGE_STREAM, stream);
             localStorage.setItem(STORAGE_PROGRAMA, programa);
+            localStorage.setItem(STORAGE_LEGENDA, legenda);
             hint.hidden = false;
             setTimeout(function () {
               hint.hidden = true;
@@ -143,6 +150,7 @@
 
     localStorage.setItem(STORAGE_STREAM, stream);
     localStorage.setItem(STORAGE_PROGRAMA, programa);
+    localStorage.setItem(STORAGE_LEGENDA, legenda);
     hint.hidden = false;
     setTimeout(function () {
       hint.hidden = true;
