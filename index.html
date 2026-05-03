@@ -68,7 +68,11 @@
   </main>
 
   <section class="canais-section main" aria-label="Lista de canais">
-    <h2 class="canais-section__title">Outros canais</h2>
+    <h2 class="canais-section__title">Canais</h2>
+    <div class="canais-tools">
+      <input type="search" class="canais-busca" id="canais-busca" placeholder="🔍 Buscar canal…" aria-label="Buscar canal">
+      <div class="canais-filtros" id="canais-filtros" role="group" aria-label="Filtrar por categoria"></div>
+    </div>
     <div class="canais-grid" id="canais-lista" aria-live="polite">
       <p class="canais-loading">Carregando canais…</p>
     </div>

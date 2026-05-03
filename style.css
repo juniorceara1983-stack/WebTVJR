@@ -446,6 +446,62 @@ a:hover {
   margin: 0.3rem 0 0;
 }
 
+/* Channel filter tools */
+.canais-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.canais-busca {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.canais-busca:focus {
+  border-color: var(--accent);
+}
+.canais-busca::placeholder {
+  color: var(--text-muted);
+}
+
+.canais-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filtro-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.filtro-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filtro-btn--active {
+  border-color: var(--accent);
+  background: rgba(61, 214, 198, 0.12);
+  color: var(--accent);
+}
+
 /* Channel list */
 .canais-section {
   margin-top: 2.5rem;
