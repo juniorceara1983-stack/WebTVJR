@@ -311,6 +311,14 @@
     scrollToPlayer();
   }
 
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function buildFiltros(canais) {
     var container = document.getElementById('canais-filtros');
     if (!container) return;
@@ -324,7 +332,7 @@
       var isActive = j === 0 ? ' filtro-btn--active' : '';
       var dataVal = cats[j] === 'Todos' ? '' : cats[j];
       html += '<button type="button" class="filtro-btn' + isActive + '" data-cat="' +
-        dataVal.replace(/"/g, '&quot;') + '">' + cats[j] + '</button>';
+        escapeHtml(dataVal) + '">' + escapeHtml(cats[j]) + '</button>';
     }
     container.innerHTML = html;
     var btns = container.querySelectorAll('.filtro-btn');

@@ -59,12 +59,6 @@
       "url": "https://w2.manasat.com/kkids/smil:kkids.smil/playlist.m3u8",
       "categoria": "Infantil",
       "logo": ""
-    },
-    {
-      "nome": "3ABN Kids",
-      "url": "https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8",
-      "categoria": "Infantil",
-      "logo": ""
     }
   ]
 }
