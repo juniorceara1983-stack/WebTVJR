@@ -6,6 +6,7 @@
   var fecPlayer = null;
   var lastRemoteStream = '';
   var mainStreamUrl = '';
+  var allCanais = [];
 
   function apiBaseUrl() {
     var u = window.FEC_API && window.FEC_API.scriptUrl;
@@ -310,6 +311,61 @@
     scrollToPlayer();
   }
 
+  function buildFiltros(canais) {
+    var container = document.getElementById('canais-filtros');
+    if (!container) return;
+    var cats = ['Todos'];
+    for (var i = 0; i < canais.length; i++) {
+      var cat = canais[i].categoria || '';
+      if (cat && cats.indexOf(cat) === -1) cats.push(cat);
+    }
+    var html = '';
+    for (var j = 0; j < cats.length; j++) {
+      var isActive = j === 0 ? ' filtro-btn--active' : '';
+      var dataVal = cats[j] === 'Todos' ? '' : cats[j];
+      html += '<button type="button" class="filtro-btn' + isActive + '" data-cat="' +
+        dataVal.replace(/"/g, '&quot;') + '">' + cats[j] + '</button>';
+    }
+    container.innerHTML = html;
+    var btns = container.querySelectorAll('.filtro-btn');
+    for (var k = 0; k < btns.length; k++) {
+      (function (btn) {
+        btn.addEventListener('click', function () {
+          var allBtns = container.querySelectorAll('.filtro-btn');
+          for (var m = 0; m < allBtns.length; m++) {
+            allBtns[m].classList.remove('filtro-btn--active');
+          }
+          btn.classList.add('filtro-btn--active');
+          filterAndRender();
+        });
+      })(btns[k]);
+    }
+  }
+
+  function filterAndRender() {
+    var container = document.getElementById('canais-filtros');
+    var activeBtn = container && container.querySelector('.filtro-btn--active');
+    var cat = activeBtn ? activeBtn.getAttribute('data-cat') : '';
+    var busca = document.getElementById('canais-busca');
+    var query = busca ? busca.value.trim().toLowerCase() : '';
+    var filtered = [];
+    for (var i = 0; i < allCanais.length; i++) {
+      var c = allCanais[i];
+      var catMatch = !cat || c.categoria === cat;
+      var nameMatch = !query || c.nome.toLowerCase().indexOf(query) !== -1;
+      if (catMatch && nameMatch) filtered.push(c);
+    }
+    renderCanais(filtered);
+  }
+
+  function setupBusca() {
+    var busca = document.getElementById('canais-busca');
+    if (!busca) return;
+    busca.addEventListener('input', function () {
+      filterAndRender();
+    });
+  }
+
   function renderCanais(canais) {
     var lista = document.getElementById('canais-lista');
     if (!lista) return;
@@ -349,7 +405,10 @@
         return res.json();
       })
       .then(function (data) {
-        renderCanais(data.canais || []);
+        allCanais = data.canais || [];
+        buildFiltros(allCanais);
+        renderCanais(allCanais);
+        setupBusca();
       })
       .catch(function () {
         var lista = document.getElementById('canais-lista');
